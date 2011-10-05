@@ -1,0 +1,4 @@
+<%@ Page Language="C#" MasterPageFile="~/js.master" AutoEventWireup="true" CodeFile="companydetails.aspx.cs" Inherits="companydetails" Title="Untitled Page" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+</asp:Content>
+

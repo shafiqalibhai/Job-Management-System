@@ -1,0 +1,90 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+using System.Data.SqlClient;
+
+public partial class register : System.Web.UI.Page
+{
+     SqlConnection con;
+    SqlCommand cmd;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            MultiView1.ActiveViewIndex = 0;
+        }
+    }
+
+
+    protected void BtnNext_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            con = new SqlConnection("integrated security=sspi;Server=.;Database=Jobs");
+
+            con.Open();
+            if (txtUname.Text == "" || txtPwd.Text=="")
+            {
+                lblmsg.Text = "sorry pls enter the required fileds";
+            }
+            else
+            {
+                cmd = new SqlCommand("select count(*) from users where uname = @uname", con);
+                cmd.Parameters.Add("@uname", SqlDbType.VarChar, 10).Value = txtUname.Text;
+
+                int cnt = (int)cmd.ExecuteScalar();
+                if (cnt == 1)
+                {
+                    lblmsg.Text = "Sorry! Username is already present. Try another name!";
+                    return;
+                }
+                cmd.CommandText = "select count(*) from users where email = @email";
+                cmd.Parameters.Add("@email", SqlDbType.VarChar, 50).Value = txtEmail.Text;
+
+                cnt = (int)cmd.ExecuteScalar();
+                if (cnt == 1)
+                {
+                    lblmsg.Text = "Sorry! Email address is already present.";
+                    return;
+                }
+
+
+
+                string dt = DateTime.Today.ToShortDateString();
+                cmd = new SqlCommand("insert into Users values(@p1,@p2,@p3,@p4,@p5,@p6,@p7)", con);
+                cmd.Parameters.Add(new SqlParameter("@p1", txtUname.Text));
+                cmd.Parameters.Add(new SqlParameter("@p2", txtPwd.Text));
+                cmd.Parameters.Add(new SqlParameter("@p4", dt));
+                cmd.Parameters.Add(new SqlParameter("@p3", txtEmail.Text));
+                cmd.Parameters.Add(new SqlParameter("@p6", txtAddress.Text));
+                cmd.Parameters.Add(new SqlParameter("@p7", txtPhone.Text));
+                cmd.Parameters.Add(new SqlParameter("@p5", ddlUtype.SelectedItem.Text));
+                cmd.ExecuteNonQuery();
+                con.Close();
+                hPwd.Text = txtPwd.Text;
+                MultiView1.ActiveViewIndex = ddlUtype.SelectedIndex + 1;
+            }
+        }
+
+        catch (Exception ex)
+        {
+            lblmsg.Text = "Error :" + ex.Message;
+        }
+        finally
+        {
+            con.Close();
+        }
+    }
+
+    protected void btnRegister_Click(object sender, EventArgs e)
+    {
+
+    }
+}

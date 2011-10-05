@@ -1,0 +1,43 @@
+using System;
+using System.Data;
+using System.Configuration;
+using System.Collections;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
+using System.Web.UI.HtmlControls;
+using System.Data.SqlClient;
+
+public partial class register : System.Web.UI.Page
+{
+    private SqlConnection con;
+    private SqlCommand cmd;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            MultiView1.ActiveViewIndex = 0;
+        }
+    }
+
+
+    protected void BtnNext_Click(object sender, EventArgs e)
+    {
+        
+        con = new SqlConnection("integrated security=sspi;Server=.;Database=Jobs");
+        con.Open();
+        string  dt=DateTime.Today.ToShortDateString();
+        cmd = new SqlCommand("insert into Users values(@p1,@p2,@p3,@p4,@p5,@p6,@p7)", con);
+        cmd.Parameters .Add (new SqlParameter ("@p1",txtUname.Text ));
+        cmd.Parameters.Add(new SqlParameter("@p2", txtPwd.Text));
+        cmd.Parameters .Add(new SqlParameter ("@p4",dt));
+        cmd.Parameters.Add(new SqlParameter("@p3", txtEmail.Text));
+        cmd.Parameters.Add(new SqlParameter("@p6", txtAddress.Text));
+        cmd.Parameters.Add(new SqlParameter("@p7", txtPhone.Text));
+        cmd.Parameters.Add(new SqlParameter("@p5", ddlUtype.Text));
+        cmd.ExecuteNonQuery();
+        con.Close();
+    }
+}
